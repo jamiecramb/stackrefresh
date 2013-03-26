@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Root Context
+    ============
+    * Defines shared resources visible to all other (web) components.
+    * Referenced by the web.xml's contextConfigLocation property.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Turn on support for core annotations such as @Autowired for the root context -->
+    <context:annotation-config />
+
+    <!-- Import the context fragments that make up the root context -->
+    <import resource="batch-context.xml" />
+    <import resource="data-context.xml" />
+    <import resource="security-context.xml" />
+    
+    <!-- Create our service beans -->
+    <bean id="bookService" class="org.jcramb.stackrefresh.book.service.impl.BookServiceImpl" />
+
+</beans>

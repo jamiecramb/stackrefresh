@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Web Context
+    ============
+    * A "child" Spring context that is created by the dispatcher servlet defined in the web.xml.
+    * Referenced by the dispatcherServlet's contextConfigLocation property .
+    * Defines the security configuration (authentication manager, protected urls, login/logout behaviour, etc) for the application.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Turn on support for core annotations such as @Autowired for the child (web) context -->
+    <context:annotation-config />
+
+    <!-- Enables the Spring MVC @Controller programming model -->
+    <mvc:annotation-driven />
+
+    <!--
+        Define the View Resolver that resolves views selected for rendering by @Controllers to
+        *.jsp resources in the /WEB-INF/views directory
+    -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+
+    <!-- Create our controller beans -->
+    <bean id="bookRestController" class="org.jcramb.stackrefresh.book.rest.BookRestController" />
+</beans>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Batch Context
+    =================
+    * A fragment of the overall "root" context that is split out to keep the file sizes manageable.
+    * Referenced by the root-context.xml file.
+    * Defines the batch processing configuration (e.g. spring batch or spring task support) for the application.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:batch="http://www.springframework.org/schema/batch" xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd">
+
+    <task:annotation-driven />
+    
+    <bean id="checkForUpdatedBooksTask" class="org.jcramb.stackrefresh.book.task.CheckForUpdatedBooksTask" />
+
+</beans>

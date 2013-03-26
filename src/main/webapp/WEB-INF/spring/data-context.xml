@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Data Context
+    =============
+    * A fragment of the overall "root" context that is split out to keep the file sizes manageable.
+    * Referenced by the root-context.xml file.
+    * Defines the data sources, data connections, and ORM setup for the application.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+    xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:repository="http://www.springframework.org/schema/data/repository" xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+        http://www.springframework.org/schema/data/repository http://www.springframework.org/schema/data/repository/spring-repository.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Turn on transactional annotations -->
+    <tx:annotation-driven />
+
+    <!-- Setup in memory H2 database / add provide access to it as a bean called "testDataSource" -->
+    <jdbc:embedded-database type="H2" id="testDataSource" />
+
+    <!--
+        Define the persistence unit manager that supports the ability to provide fragmented definitions
+        of persistence units (i.e. merge multiple persistence.xml definitions if they have the same
+        persistence-unit name).
+    -->
+    <bean id="persistenceUnitManager" class="org.springframework.data.jpa.support.MergingPersistenceUnitManager">
+        <property name="persistenceXmlLocations"><!-- default -->
+            <list>
+                <value>classpath*:META-INF/persistence.xml</value>
+            </list>
+        </property>
+        <property name="defaultDataSource" ref="testDataSource" />
+    </bean>
+
+    <!-- Define the JPA EntityManagerFactory -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="persistenceUnitManager" ref="persistenceUnitManager" />
+        <property name="persistenceUnitName" value="BookPU" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+        </property>
+        <property name="jpaProperties">
+            <map>
+                <entry key="hibernate.validator.apply_to_ddl" value="false" />
+                <entry key="hibernate.validator.autoregister_listeners" value="false" />
+                <entry key="hibernate.hbm2ddl.auto" value="update" />
+                <entry key="hibernate.show_sql" value="true" />
+                <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
+            </map>
+        </property>
+    </bean>
+
+    <!-- Define the transaction manager -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <!--
+        Scan for Spring Data JPA repositories and also enable persistence exception translation for repos annotated with @Repository.
+    -->
+    <jpa:repositories base-package="org.jcramb.stackrefresh" entity-manager-factory-ref="entityManagerFactory" transaction-manager-ref="transactionManager" repository-impl-postfix="CustomImpl" />
+
+    <!--
+        Create our custom repository implementations that aren't provided by spring-data-jpa generation
+    -->
+    <bean id="bookRepositoryCustomImpl" class="org.jcramb.stackrefresh.book.repository.impl.BookRepositoryCustomImpl" />
+</beans>
